@@ -1,38 +1,75 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Card from "./components/Card";
 import CartoonDetails from "./components/CartoonDetails";
 import CookieConsent from "react-cookie-consent";
+import Cookies from "js-cookie";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import LicenseFile from "./components/LicenseFile";
 
 function App() {
+  const [cookiesAccepted, setCookiesAccepted] = useState(false);
+
+  const handleAccept = () => {
+    setCookiesAccepted(true);
+
+    // Збереження cookies
+    Cookies.set("necessaryCookies", "true", { expires: 1 });
+
+    console.log("Cookies прийняті та збережені.");
+  };
+
+  const handleDecline = () => {
+    setCookiesAccepted(false);
+
+    // Видалення cookies
+    Cookies.remove("necessaryCookies");
+    console.log("Cookies видалені.");
+  };
+
   return (
     <>
-      <CookieConsent
-        location="bottom"
-        buttonText="Зрозуміло"
-        cookieName="myCookieConsent"
-        style={{ background: "#2B373B" }}
-        buttonStyle={{
-          color: "#4e503b",
-          fontSize: "15px",
-          fontWeight: "bold",
-          borderRadius: "2px",
-        }}
-        expires={1}
-      >
-        Цей сайт використовує cookies для покращення вашого досвіду. Продовжуючи
-        використовувати сайт, ви погоджуєтесь з нашою{" "}
-        <a href="/privacy-policy" style={{ color: "#fff" }}>
-          Політикою конфіденційності
-        </a>
-        .
-      </CookieConsent>
       <Router>
         <Navbar />
         <Routes>
           <Route path="/" element={<Card />} />
           <Route path="/cartoon/:id" element={<CartoonDetails />} />
+          <Route path="/privacy_policy" element={<PrivacyPolicy />} />
+          <Route path="/license" element={<LicenseFile />} />
         </Routes>
+
+        <CookieConsent
+          location="bottom"
+          buttonText="Прийняти всі"
+          declineButtonText="Відхилити всі"
+          enableDeclineButton
+          onAccept={handleAccept}
+          onDecline={handleDecline}
+          cookieName="myCookieConsent"
+          style={{ background: "#2B373B" }}
+          buttonStyle={{
+            color: "#4e503b",
+            fontSize: "15px",
+            fontWeight: "bold",
+            borderRadius: "2px",
+          }}
+          declineButtonStyle={{
+            color: "#fff",
+            fontSize: "15px",
+            background: "#655317",
+            fontWeight: "bold",
+            borderRadius: "2px",
+          }}
+          expires={1}
+        >
+          Цей сайт використовує cookies для покращення вашого досвіду.
+          Продовжуючи використовувати сайт, ви погоджуєтесь з нашою{" "}
+          <Link to="/privacy_policy" style={{ color: "#fff" }}>
+            Політикою конфіденційності
+          </Link>
+          .
+        </CookieConsent>
       </Router>
     </>
   );
