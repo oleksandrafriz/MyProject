@@ -1,0 +1,11 @@
+.search {
+  text-align: center;
+}
+
+.searchInp {
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid black;
+  width: 500px;
+  margin-bottom: 20px;
+}

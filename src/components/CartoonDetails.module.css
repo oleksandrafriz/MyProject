@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  justify-content: space-around;
+  max-width: 1200px;
+}
+
+.cartoonPoster {
+  width: 250px;
+  border-radius: 10px;
+}
