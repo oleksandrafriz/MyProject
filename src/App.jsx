@@ -7,10 +7,27 @@ import CookieConsent from "react-cookie-consent";
 import Cookies from "js-cookie";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import LicenseFile from "./components/LicenseFile";
+import CardItem from "./components/CardItem";
 
+/**
+ * Головний компонент застосунку.
+ * Налаштовує маршрутизацію, відображає навігацію, основний контент та cookie popup.
+ *
+ * @returns {JSX.Element} Головний компонент React-додатка.
+ */
 function App() {
+  /**
+   * Стан для збереження інформації про прийняття cookies.
+   * @type {boolean}
+   */
   const [cookiesAccepted, setCookiesAccepted] = useState(false);
 
+  /**
+   * Обробник прийняття cookies.
+   * Зберігає cookies у браузері та оновлює стан.
+   *
+   * @returns {void}
+   */
   const handleAccept = () => {
     setCookiesAccepted(true);
 
@@ -20,6 +37,12 @@ function App() {
     console.log("Cookies прийняті та збережені.");
   };
 
+  /**
+   * Обробник відхилення cookies.
+   * Видаляє cookies з браузера та оновлює стан.
+   *
+   * @returns {void}
+   */
   const handleDecline = () => {
     setCookiesAccepted(false);
 
@@ -37,6 +60,7 @@ function App() {
           <Route path="/cartoon/:id" element={<CartoonDetails />} />
           <Route path="/privacy_policy" element={<PrivacyPolicy />} />
           <Route path="/license" element={<LicenseFile />} />
+          <Route path="/card_item" element={<CardItem />} />
         </Routes>
 
         <CookieConsent
