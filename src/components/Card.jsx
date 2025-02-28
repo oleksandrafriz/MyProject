@@ -1,6 +1,4 @@
 import React from "react";
-import app from "../firebase";
-import { getDatabase, ref, get } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styles from "./Card.module.css";
@@ -8,7 +6,7 @@ import SearchBar from "./SearchBar";
 import CardItem from "./CardItem";
 
 /**
- * Компонент Card відображає список фільмів (мультфільмів) та дозволяє здійснювати пошук і перехід до деталей конкретного мультфільма.
+ * Компонент Card відображає список мультфільмів та дозволяє здійснювати пошук і перехід до деталей конкретного мультфільма.
  *
  * @param {Object} props - Пропси компонента.
  * @param {Array} props.movieArray - Список фільмів для відображення.
@@ -37,21 +35,19 @@ function Card({
     ) {
       const fetchData = async () => {
         try {
-          const db = getDatabase(app);
-          const dbRef = ref(db, "cartoons");
-          const snapshot = await get(dbRef);
+          const response = await fetch("http://localhost:5000/cartoons");
+          const data = await response.json();
 
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            const dataArray = Object.entries(data).map(([id, cartoon]) => ({
+          // Фільт порожніх елементів
+          const dataArray = Object.entries(data)
+            .map(([id, cartoon]) => ({
               id,
               ...cartoon,
-            }));
-            setMovieArray(dataArray);
-            setOriginalMovieArray(dataArray);
-          } else {
-            alert("error");
-          }
+            }))
+            .filter((cartoon) => cartoon.title);
+
+          setMovieArray(dataArray);
+          setOriginalMovieArray(dataArray);
         } catch (error) {
           console.error("Помилка отримання даних:", error);
         }
@@ -60,7 +56,6 @@ function Card({
       fetchData();
     }
   }, [initialMovieArray, initialOriginalMovieArray]);
-
   /**
    * Обробляє зміну значення в полі пошуку та фільтрує movieArray за введеним запитом.
    *

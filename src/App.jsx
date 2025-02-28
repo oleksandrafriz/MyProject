@@ -8,6 +8,8 @@ import Cookies from "js-cookie";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import LicenseFile from "./components/LicenseFile";
 import CardItem from "./components/CardItem";
+import SwaggerUI from "swagger-ui-react";
+import "swagger-ui-react/swagger-ui.css";
 
 /**
  * Головний компонент застосунку.
@@ -61,6 +63,10 @@ function App() {
           <Route path="/privacy_policy" element={<PrivacyPolicy />} />
           <Route path="/license" element={<LicenseFile />} />
           <Route path="/card_item" element={<CardItem />} />
+          <Route
+            path="/swagger"
+            element={<SwaggerUI url="./swagger/swagger.json" />}
+          />
         </Routes>
 
         <CookieConsent

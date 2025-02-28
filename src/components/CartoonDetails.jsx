@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import app from "../firebase";
-import { getDatabase, ref, get } from "firebase/database";
 import { useParams } from "react-router-dom";
 import styles from "./CartoonDetails.module.css";
 
@@ -34,46 +32,41 @@ function CartoonDetails() {
    * @returns {Promise<void>}
    */
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const db = getDatabase(app);
-        const dbRef = ref(db, `cartoons/${id}`);
-        const snapshot = await get(dbRef);
+    if (!id) {
+      return;
+    }
 
-        if (snapshot.exists()) {
-          setCartoon(snapshot.val());
-        } else {
-          alert("error");
-        }
+    const fetchData = async (id) => {
+      try {
+        const response = await fetch(`http://localhost:5000/cartoons/${id}`);
+        const data = await response.json();
+        setCartoon(data);
       } catch (error) {
         console.error("Помилка отримання даних:", error);
+        setCartoon(null);
       }
     };
 
-    fetchData();
+    fetchData(id);
   }, [id]);
 
   if (!cartoon) {
-    return <p>Завантаження...</p>;
+    return (
+      <p>{cartoon === null ? "Мультфільм не знайдено." : "Завантаження..."}</p>
+    );
   }
 
   return (
-    <>
-      <div className={styles.container}>
-        <img
-          src={cartoon.image}
-          alt="poster"
-          className={styles.cartoonPoster}
-        />
-        <div className={styles.details}>
-          <h3 className={styles.title}>{cartoon.title}</h3>
-          <p className="description">Description: {cartoon.descr}</p>
-          <p className="date">Release: {cartoon.date}</p>
-          <p className="duration">Duration: {cartoon.duration} min</p>
-          <p className="production">Production: {cartoon.Production}</p>
-        </div>
+    <div className={styles.container}>
+      <img src={cartoon.image} alt="poster" className={styles.cartoonPoster} />
+      <div className={styles.details}>
+        <h3 className={styles.title}>{cartoon.title}</h3>
+        <p className="description">Description: {cartoon.descr}</p>
+        <p className="date">Release: {cartoon.date}</p>
+        <p className="duration">Duration: {cartoon.duration} min</p>
+        <p className="production">Production: {cartoon.Production}</p>
       </div>
-    </>
+    </div>
   );
 }
 

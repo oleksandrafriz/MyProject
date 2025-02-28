@@ -1,0 +1,109 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cartoon API",
+    "description": "API для роботи з мультфільмами",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Проксі-сервер для Firebase Realtime Database"
+    }
+  ],
+  "paths": {
+    "/cartoons": {
+      "get": {
+        "summary": "Отримати список мультфільмів",
+        "description": "Повертає список усіх мультфільмів.",
+        "responses": {
+          "200": {
+            "description": "Успішно отримано список мультфільмів",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/Cartoon"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cartoons/{id}": {
+      "get": {
+        "summary": "Отримати деталі мультфільма за ID",
+        "description": "Повертає деталі мультфільма за його ідентифікатором.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успішно отримано деталі мультфільма",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartoonDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Мультфільм не знайдено"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Cartoon": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          }
+        }
+      },
+      "CartoonDetails": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "descr": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "integer"
+          },
+          "Production": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
