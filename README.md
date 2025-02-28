@@ -68,13 +68,77 @@ VITE_FIREBASE_MEASUREMENT_ID="G-5TQR2CVE6Y"
 ### Налаштування Firebase Proxy Server
 
 1. Створіть папку `firebase-proxy-server` у корені проекту.
-2. Додайте необхідні конфігураційні файли (наприклад, `firebase-config.json`).
-3. Запустіть проксі-сервер за допомогою команди:
+2. Відкрийте термінал у цій папці та ініціалізуйте Node.js проект:
 
 ```bash
-cd firebase-proxy-server
-npm install
-npm start
+npm init -y
+```
+
+3. Встановіть необхідні пакети:
+
+```bash
+npm install express cors firebase-admin
+```
+
+4. Створіть серверний файл
+   Створіть файл index.js у корені папки сервера та додайте наступний код:
+
+```bash
+const express = require("express");
+const cors = require("cors");
+const admin = require("firebase-admin");
+const app = express();
+
+app.use(cors());
+
+const serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL:
+    "https://cartoons-1376e-default-rtdb.europe-west1.firebasedatabase.app/",
+});
+
+const db = admin.database();
+
+// Маршрут для отримання списку мультфільмів
+app.get("/cartoons", async (req, res) => {
+  try {
+    const snapshot = await db.ref("cartoons").once("value");
+    const data = snapshot.val();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: "Помилка отримання даних" });
+  }
+});
+
+// Маршрут для отримання деталей мультфільма за ID
+app.get("/cartoons/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const snapshot = await db.ref(`cartoons/${id}`).once("value");
+    const data = snapshot.val();
+    if (data) {
+      res.json(data);
+    } else {
+      res.status(404).json({ error: "Мультфільм не знайдено" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Помилка отримання даних" });
+  }
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Сервер запущено на порті ${PORT}`);
+});
+
+```
+
+5. Відкрийте термінал у папці сервера та запустіть сервер:
+
+```bash
+node index.js
 ```
 
 ## Налаштування
@@ -89,11 +153,26 @@ npm install swagger-ui-express
 
 #### Перегляд Swagger документації:
 
-Після запуску сервера відкрийте браузер і перейдіть за адресою:
+- Перейдіть в консолі в папку firebase-proxy-server
 
 ```bash
-http://localhost:порт/swagger
+cd firebase-proxy-server
 ```
+
+- Виконайте запуск серверу
+
+```bash
+node index.js
+```
+
+- Виконайте запуск фронтенду
+
+```bash
+npm run dev
+```
+
+- Перейдіть в браузер та відкрийте посилання:
+  http://порт/swagger
 
 ### Storybook
 
@@ -116,9 +195,24 @@ npm run storybook
 ### Запуск проекту
 
 1. Запуск сервера:
+   Перейдіть до папки
 
 ```bash
-npm run start
+cd firebase-proxy-server
+```
+
+Та запустіть сервер командою:
+
+- Перейдіть в консолі в папку firebase-proxy-server
+
+```bash
+cd firebase-proxy-server
+```
+
+- Виконайте запуск
+
+```bash
+node index.js
 ```
 
 2. Запуск фронтенду:
